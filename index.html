@@ -9,233 +9,186 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 :root{
-  --bg:#07080D;--s:#0C0E15;--r:#111520;--b:#1C2030;--hi:#252D45;
-  --lime:#C8FF57;--limed:#A8E030;--blue:#4D9EFF;--red:#FF4D6A;
-  --amber:#FFB830;--teal:#00E5C3;--mango:#FF9F43;--purple:#A78BFA;
-  --white:#F0F2F7;--mid:#8892A4;--muted:#3A4255;
+  --bg:#09080A;--s:#100E12;--r:#181519;--b:#25202A;--hi:#302838;
+  --lime:#CCFF47;--limed:#AADC28;
+  --mango:#FF9A35;--mangod:#E07A18;
+  --coral:#FF5F6D;--blue:#5B9EFF;--amber:#FFB830;--teal:#00D4AA;
+  --white:#F2EBE0;--mid:#8A7D75;--muted:#48403A;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{
-  background:var(--bg);color:var(--white);
-  font-family:'Sora',sans-serif;
-  height:100vh;overflow:hidden;user-select:none;
-}
-/* grid bg */
-body::before{
-  content:'';position:fixed;inset:0;
-  background-image:
-    linear-gradient(rgba(200,255,87,.02) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(200,255,87,.02) 1px,transparent 1px);
-  background-size:60px 60px;pointer-events:none;z-index:0;
-}
+html,body{background:var(--bg);color:var(--white);font-family:'Sora',sans-serif;height:100vh;overflow:hidden;user-select:none}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 60% 50% at 15% 50%,rgba(255,154,53,.04) 0%,transparent 70%),
+             radial-gradient(ellipse 40% 40% at 85% 20%,rgba(204,255,71,.03) 0%,transparent 60%);
+  pointer-events:none;z-index:0}
+/* grid */
+body::after{content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(255,154,53,.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,154,53,.018) 1px,transparent 1px);
+  background-size:64px 64px;pointer-events:none;z-index:0}
+
 /* progress */
-#prog{
-  position:fixed;top:0;left:0;height:3px;
-  background:linear-gradient(90deg,var(--lime),var(--teal));
-  transition:width .6s cubic-bezier(.16,1,.3,1);
-  z-index:100;box-shadow:0 0 16px rgba(200,255,87,.4);
-}
+#prog{position:fixed;top:0;left:0;height:3px;
+  background:linear-gradient(90deg,var(--lime),var(--mango));
+  transition:width .6s cubic-bezier(.16,1,.3,1);z-index:100;
+  box-shadow:0 0 18px rgba(204,255,71,.35),0 0 40px rgba(255,154,53,.2)}
+
 /* slides */
 #deck{position:relative;width:100vw;height:100vh;z-index:1}
-.slide{
-  position:absolute;inset:0;
-  display:flex;flex-direction:column;justify-content:center;
-  padding:clamp(36px,4.5vw,72px) clamp(48px,7vw,112px);
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(32px,4vw,64px) clamp(44px,6.5vw,104px);
   opacity:0;pointer-events:none;
   transition:opacity .5s ease,transform .5s cubic-bezier(.16,1,.3,1);
-  transform:translateY(20px);
-}
+  transform:translateY(22px)}
 .slide.active{opacity:1;pointer-events:all;transform:none}
-.slide.out{opacity:0;transform:translateY(-16px);transition:opacity .35s ease,transform .35s ease}
-/* section dividers */
-.sec{
-  background:linear-gradient(135deg,#08090f,#0d1020);
-  justify-content:flex-end;padding-bottom:clamp(48px,6vh,80px);
-}
+.slide.out{opacity:0;transform:translateY(-16px);transition:opacity .35s,transform .35s}
+
+/* section dividers — warm dark */
+.sec{background:linear-gradient(145deg,#0C0A0E,#120F15);justify-content:flex-end;
+  padding-bottom:clamp(44px,5.5vh,72px)}
+
 /* nav */
-#nav{position:fixed;bottom:24px;right:28px;display:flex;gap:8px;z-index:200}
-.nb{
-  width:42px;height:42px;border-radius:10px;
-  border:1px solid var(--b);background:var(--s);
-  color:var(--mid);font-size:17px;cursor:pointer;
-  transition:all .18s;display:flex;align-items:center;justify-content:center;
-  font-family:'Sora',sans-serif;
-}
+#nav{position:fixed;bottom:22px;right:24px;display:flex;gap:8px;z-index:200}
+.nb{width:42px;height:42px;border-radius:11px;border:1px solid var(--b);background:var(--s);
+  color:var(--mid);font-size:17px;cursor:pointer;transition:all .18s;
+  display:flex;align-items:center;justify-content:center}
 .nb:hover{background:var(--r);color:var(--white)}
-.nb.go{background:var(--lime);color:#07080D;border-color:var(--lime);font-weight:700}
-.nb.go:hover{background:var(--limed)}
+.nb.go{background:linear-gradient(135deg,var(--lime),var(--limed));color:#09080A;
+  border-color:var(--lime);font-weight:800}
+.nb.go:hover{background:linear-gradient(135deg,#D9FF5E,var(--lime))}
+
 /* counter */
-#ct{
-  position:fixed;bottom:31px;left:50%;transform:translateX(-50%);
-  font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;
-  letter-spacing:1.5px;z-index:200;
-}
+#ct{position:fixed;bottom:29px;left:50%;transform:translateX(-50%);
+  font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;letter-spacing:1.5px;z-index:200}
+
 /* live badge */
-#live{
-  position:fixed;top:16px;right:20px;
-  background:rgba(255,77,106,.1);border:1px solid rgba(255,77,106,.3);
-  border-radius:99px;padding:5px 14px;
-  font-size:10px;color:var(--red);font-weight:700;
-  display:flex;align-items:center;gap:7px;z-index:200;
-  letter-spacing:.5px;text-transform:uppercase;
-  opacity:0;transition:opacity .4s;
-}
+#live{position:fixed;top:14px;right:18px;
+  background:rgba(255,95,109,.1);border:1px solid rgba(255,95,109,.28);
+  border-radius:99px;padding:5px 14px;font-size:10px;color:var(--coral);
+  font-weight:800;display:flex;align-items:center;gap:6px;z-index:200;
+  letter-spacing:.6px;text-transform:uppercase;opacity:0;transition:opacity .4s}
 #live.on{opacity:1}
-.dot{width:6px;height:6px;border-radius:50%;background:var(--red);animation:pulse 1.4s infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--coral);
+  animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.7)}}
 
-/* typography */
-.tag{
-  display:inline-flex;align-items:center;gap:6px;
-  background:rgba(200,255,87,.08);border:1px solid rgba(200,255,87,.2);
-  border-radius:99px;padding:5px 14px;
-  font-size:10px;font-weight:700;color:var(--lime);
-  text-transform:uppercase;letter-spacing:1px;margin-bottom:18px;
-}
-.tag.blue{background:rgba(77,158,255,.08);border-color:rgba(77,158,255,.2);color:var(--blue)}
-.tag.amber{background:rgba(255,184,48,.08);border-color:rgba(255,184,48,.2);color:var(--amber)}
-.tag.red{background:rgba(255,77,106,.08);border-color:rgba(255,77,106,.2);color:var(--red)}
-.tag.mango{background:rgba(255,159,67,.08);border-color:rgba(255,159,67,.2);color:var(--mango)}
+/* type */
+.tag{display:inline-flex;align-items:center;gap:7px;
+  background:rgba(255,154,53,.08);border:1px solid rgba(255,154,53,.22);
+  border-radius:99px;padding:5px 15px;font-size:10px;font-weight:700;
+  color:var(--mango);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+.tag.lime{background:rgba(204,255,71,.08);border-color:rgba(204,255,71,.22);color:var(--lime)}
+.tag.coral{background:rgba(255,95,109,.08);border-color:rgba(255,95,109,.22);color:var(--coral)}
+.tag.blue{background:rgba(91,158,255,.08);border-color:rgba(91,158,255,.22);color:var(--blue)}
+.tag.teal{background:rgba(0,212,170,.08);border-color:rgba(0,212,170,.22);color:var(--teal)}
 
-.hero{
-  font-size:clamp(44px,6.5vw,88px);
-  font-weight:900;letter-spacing:-3px;line-height:1.0;
-  margin-bottom:20px;
-}
+.hero{font-size:clamp(42px,6.2vw,86px);font-weight:900;letter-spacing:-3px;line-height:1.0;margin-bottom:18px}
 .hero em{color:var(--lime);font-style:normal}
-.hero .r{color:var(--red);font-style:normal}
-.hero .a{color:var(--amber);font-style:normal}
 .hero .m{color:var(--mango);font-style:normal}
+.hero .c{color:var(--coral);font-style:normal}
 .hero .b{color:var(--blue);font-style:normal}
+.hero .t{color:var(--teal);font-style:normal}
 
-.title{
-  font-size:clamp(30px,4.2vw,56px);
-  font-weight:800;letter-spacing:-1.5px;line-height:1.1;
-  margin-bottom:14px;
-}
+.title{font-size:clamp(28px,4vw,54px);font-weight:800;letter-spacing:-1.5px;line-height:1.1;margin-bottom:14px}
 .title em{color:var(--lime);font-style:normal}
-.title .r{color:var(--red);font-style:normal}
-.title .a{color:var(--amber);font-style:normal}
-.title .b{color:var(--blue);font-style:normal}
-.title .m{color:var(--mango);font-style:normal}
+.title .m{color:var(--mango)}
+.title .c{color:var(--coral)}
+.title .b{color:var(--blue)}
+.title .a{color:var(--amber)}
 
-.sub{font-size:clamp(13px,1.5vw,17px);color:var(--mid);line-height:1.7;max-width:580px;margin-bottom:22px}
+.sub{font-size:clamp(13px,1.4vw,16px);color:var(--mid);line-height:1.75;max-width:560px;margin-bottom:20px}
 
-.quote{
-  border-left:3px solid var(--lime);
-  padding:14px 0 14px 22px;
-  margin:16px 0;max-width:660px;
-}
-.quote p{
-  font-size:clamp(16px,2vw,24px);
-  font-style:italic;color:var(--white);
-  line-height:1.5;margin-bottom:6px;
-}
-.quote cite{font-size:12px;color:var(--muted);font-style:normal;font-weight:600}
+/* quote */
+.q{border-left:3px solid var(--lime);padding:12px 0 12px 20px;margin:14px 0;max-width:640px}
+.q.m{border-left-color:var(--mango)}
+.q p{font-size:clamp(15px,1.9vw,23px);font-style:italic;color:var(--white);line-height:1.55;margin-bottom:5px}
+.q cite{font-size:11px;color:var(--muted);font-style:normal;font-weight:700;letter-spacing:.4px}
 
 /* formula */
-.formula{
-  display:inline-block;
-  background:var(--r);border:1px solid var(--b);
-  border-radius:12px;padding:14px 22px;
-  font-family:'DM Mono',monospace;
-  font-size:clamp(13px,1.7vw,20px);
-  color:var(--lime);margin:14px 0;
-  letter-spacing:.3px;
-}
+.formula{display:inline-block;background:var(--r);border:1px solid var(--b);
+  border-radius:12px;padding:12px 20px;font-family:'DM Mono',monospace;
+  font-size:clamp(12px,1.6vw,19px);color:var(--lime);margin:12px 0;letter-spacing:.2px}
 
 /* cards */
-.cards{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
-.card{
-  background:var(--s);border:1px solid var(--b);
-  border-radius:14px;padding:16px 20px;flex:1;min-width:180px;
-}
-.card.lime{border-color:rgba(200,255,87,.25);background:rgba(200,255,87,.04)}
-.card.blue{border-color:rgba(77,158,255,.25);background:rgba(77,158,255,.04)}
-.card.red{border-color:rgba(255,77,106,.25);background:rgba(255,77,106,.04)}
-.card.amber{border-color:rgba(255,184,48,.25);background:rgba(255,184,48,.04)}
-.card.mango{border-color:rgba(255,159,67,.25);background:rgba(255,159,67,.04)}
-.card.teal{border-color:rgba(0,229,195,.25);background:rgba(0,229,195,.04)}
-.cl{font-size:10px;text-transform:uppercase;letter-spacing:.8px;font-weight:700;color:var(--muted);margin-bottom:6px}
-.cv{font-size:clamp(18px,2.2vw,26px);font-family:'DM Mono',monospace;font-weight:600;color:var(--lime);margin-bottom:4px}
+.cards{display:flex;gap:11px;flex-wrap:wrap;margin-top:12px}
+.card{background:var(--s);border:1px solid var(--b);border-radius:16px;padding:16px 20px;flex:1;min-width:175px}
+.card.lime{border-color:rgba(204,255,71,.22);background:rgba(204,255,71,.04)}
+.card.mango{border-color:rgba(255,154,53,.22);background:rgba(255,154,53,.04)}
+.card.coral{border-color:rgba(255,95,109,.22);background:rgba(255,95,109,.04)}
+.card.blue{border-color:rgba(91,158,255,.22);background:rgba(91,158,255,.04)}
+.card.teal{border-color:rgba(0,212,170,.22);background:rgba(0,212,170,.04)}
+.card.amber{border-color:rgba(255,184,48,.22);background:rgba(255,184,48,.04)}
+.cl{font-size:10px;text-transform:uppercase;letter-spacing:.9px;font-weight:700;color:var(--muted);margin-bottom:7px}
+.cv{font-size:clamp(17px,2.1vw,25px);font-family:'DM Mono',monospace;font-weight:600;color:var(--lime);margin-bottom:4px}
 .cd{font-size:12px;color:var(--mid);line-height:1.55}
 
 /* list */
-.list{display:flex;flex-direction:column;gap:9px;margin-top:12px}
-.li{
-  display:flex;align-items:flex-start;gap:14px;
-  background:var(--r);border:1px solid var(--b);
-  border-radius:12px;padding:13px 16px;
-}
-.li-mark{
-  width:22px;height:22px;border-radius:6px;
-  background:rgba(200,255,87,.1);border:1px solid rgba(200,255,87,.2);
-  color:var(--lime);font-size:11px;font-weight:800;
+.list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.li{display:flex;align-items:flex-start;gap:13px;
+  background:var(--r);border:1px solid var(--b);border-radius:12px;padding:13px 16px}
+.lm{width:22px;height:22px;border-radius:7px;flex-shrink:0;margin-top:1px;
   display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;margin-top:1px;font-family:'DM Mono',monospace;
-}
-.li-mark.r{background:rgba(255,77,106,.1);border-color:rgba(255,77,106,.2);color:var(--red)}
-.li-mark.a{background:rgba(255,184,48,.1);border-color:rgba(255,184,48,.2);color:var(--amber)}
-.li-mark.b{background:rgba(77,158,255,.1);border-color:rgba(77,158,255,.2);color:var(--blue)}
-.li-t{font-size:13px;font-weight:700;margin-bottom:3px}
-.li-d{font-size:12px;color:var(--mid);line-height:1.5}
+  font-family:'DM Mono',monospace;font-size:11px;font-weight:800}
+.lm.l{background:rgba(204,255,71,.1);border:1px solid rgba(204,255,71,.2);color:var(--lime)}
+.lm.m{background:rgba(255,154,53,.1);border:1px solid rgba(255,154,53,.2);color:var(--mango)}
+.lm.c{background:rgba(255,95,109,.1);border:1px solid rgba(255,95,109,.2);color:var(--coral)}
+.lm.b{background:rgba(91,158,255,.1);border:1px solid rgba(91,158,255,.2);color:var(--blue)}
+.lm.t{background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.2);color:var(--teal)}
+.lt{font-size:13px;font-weight:700;margin-bottom:3px}
+.ld{font-size:12px;color:var(--mid);line-height:1.5}
 
-/* 2col */
-.two{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:14px}
+/* icon block */
+.ib{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0;margin-bottom:10px}
+.ib.l{background:rgba(204,255,71,.1);border:1px solid rgba(204,255,71,.18);color:var(--lime)}
+.ib.m{background:rgba(255,154,53,.1);border:1px solid rgba(255,154,53,.18);color:var(--mango)}
+.ib.b{background:rgba(91,158,255,.1);border:1px solid rgba(91,158,255,.18);color:var(--blue)}
+.ib.t{background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.18);color:var(--teal)}
+.ib.c{background:rgba(255,95,109,.1);border:1px solid rgba(255,95,109,.18);color:var(--coral)}
 
-/* big stat */
-.stat{font-size:clamp(52px,8vw,96px);font-weight:900;font-family:'DM Mono',monospace;color:var(--lime);letter-spacing:-3px;line-height:1}
+/* two col */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px}
 
 /* steps */
-.steps{display:flex;flex-direction:column;gap:8px;margin-top:12px}
-.step{display:flex;align-items:flex-start;gap:12px;padding:11px 14px;background:var(--r);border-radius:11px;border:1px solid var(--b)}
-.sn{width:24px;height:24px;border-radius:50%;background:var(--lime);color:#07080D;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-family:'DM Mono',monospace}
+.steps{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.step{display:flex;align-items:flex-start;gap:11px;padding:11px 14px;
+  background:var(--r);border-radius:11px;border:1px solid var(--b)}
+.sn{width:22px;height:22px;border-radius:50%;
+  background:linear-gradient(135deg,var(--lime),var(--limed));
+  color:#09080A;font-size:11px;font-weight:800;display:flex;
+  align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
+  font-family:'DM Mono',monospace}
 .st{font-size:13px;font-weight:700;margin-bottom:2px}
 .sd{font-size:11px;color:var(--mid)}
 
 /* app hint */
-.hint{
-  display:inline-flex;align-items:center;gap:9px;
-  background:rgba(77,158,255,.07);border:1px solid rgba(77,158,255,.2);
-  border-radius:10px;padding:9px 16px;
-  font-size:11px;color:var(--blue);margin-top:18px;max-width:500px;
-  font-weight:600;
-}
-.hint::before{content:'📱';font-size:14px}
+.hint{display:inline-flex;align-items:center;gap:10px;
+  background:rgba(91,158,255,.07);border:1px solid rgba(91,158,255,.2);
+  border-radius:11px;padding:9px 16px;font-size:11px;color:var(--blue);
+  margin-top:16px;max-width:520px;font-weight:600}
 
-/* CTA final */
-.cta{
-  background:rgba(200,255,87,.05);
-  border:1px solid rgba(200,255,87,.18);
-  border-radius:20px;padding:36px 44px;
-  max-width:720px;margin:0 auto;text-align:center;
-}
+/* section */
+.sec-label{font-size:clamp(10px,1vw,13px);font-weight:800;
+  text-transform:uppercase;letter-spacing:2.5px;color:var(--muted);margin-bottom:10px}
+.sec-title{font-size:clamp(52px,8.5vw,108px);font-weight:900;letter-spacing:-4px;
+  line-height:.94;color:rgba(242,235,224,.06)}
+.sec-title em{color:rgba(255,154,53,.18);font-style:normal}
+.sec-tag{margin-top:22px}
 
-/* sec label */
-.sec-label{
-  font-size:clamp(11px,1.2vw,14px);font-weight:700;
-  text-transform:uppercase;letter-spacing:2px;color:var(--muted);
-  margin-bottom:12px;
-}
-.sec-title{
-  font-size:clamp(56px,9vw,110px);
-  font-weight:900;letter-spacing:-4px;line-height:.95;
-  color:rgba(255,255,255,.07);
-}
-.sec-title em{color:rgba(200,255,87,.2);font-style:normal}
+/* CTA */
+.cta{background:rgba(204,255,71,.04);border:1px solid rgba(204,255,71,.16);
+  border-radius:22px;padding:32px 40px;max-width:700px;margin:0 auto;text-align:center}
 
-/* pill row */
-.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.pill{
-  display:inline-flex;align-items:center;
-  padding:5px 13px;border-radius:99px;
-  font-size:11px;font-weight:700;
-}
-.pl{background:rgba(200,255,87,.1);color:var(--lime);border:1px solid rgba(200,255,87,.2)}
-.pa{background:rgba(255,184,48,.1);color:var(--amber);border:1px solid rgba(255,184,48,.2)}
-.pr{background:rgba(255,77,106,.1);color:var(--red);border:1px solid rgba(255,77,106,.2)}
-.pb{background:rgba(77,158,255,.1);color:var(--blue);border:1px solid rgba(77,158,255,.2)}
-.pm{background:rgba(255,159,67,.1);color:var(--mango);border:1px solid rgba(255,159,67,.2)}
+/* pills */
+.pills{display:flex;gap:7px;flex-wrap:wrap;margin-top:16px;justify-content:center}
+.pl{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;
+  border-radius:99px;font-size:11px;font-weight:700;
+  background:rgba(204,255,71,.1);color:var(--lime);border:1px solid rgba(204,255,71,.22)}
+.pm{background:rgba(255,154,53,.1);color:var(--mango);border:1px solid rgba(255,154,53,.22)}
+.pb{background:rgba(91,158,255,.1);color:var(--blue);border:1px solid rgba(91,158,255,.22)}
+
+/* inline icon SVG */
+svg.ic{display:inline-block;vertical-align:middle}
 </style>
 </head>
 <body>
@@ -249,508 +202,437 @@ body::before{
 
 <div id="deck">
 
-<!-- 0: COVER -->
+<!-- 0 COVER -->
 <div class="slide active">
-  <div class="tag">🥭 Mangos · Charla de finanzas personales</div>
+  <div class="tag lime">
+    <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M10 3C7 3 5 5.5 5 8.5c0 4 3.5 6.5 5 8 1.5-1.5 5-4 5-8C15 5.5 13 3 10 3z" stroke="currentColor" strokeWidth="1.5"/><path d="M10 3V1M10 1l1.5 1H10m0 0H8.5L10 1" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/></svg>
+    Mangos · Charla de finanzas personales
+  </div>
   <h1 class="hero">Tu <em>plata,</em><br>tu <em>regla.</em></h1>
   <p class="sub">Un sistema simple para que tu dinero trabaje para vos — y no al revés.</p>
-  <div class="hint" style="background:rgba(200,255,87,.07);border-color:rgba(200,255,87,.2);color:var(--lime)">Abrí Mangos en tu celular mientras arrancamos</div>
+  <div class="hint" style="background:rgba(204,255,71,.07);border-color:rgba(204,255,71,.2);color:var(--lime)">
+    <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.4"/><path d="M10 9v5M10 7v1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+    Abrí Mangos en tu celular mientras arrancamos
+  </div>
 </div>
 
-<!-- 1: SECTION bloque 1 -->
+<!-- 1 SECTION -->
 <div class="slide sec">
   <div class="sec-label">Bloque 01</div>
   <div class="sec-title">Objetivo<br><em>y ahorro</em></div>
-  <div class="tag" style="margin-top:24px">El sistema empieza con una meta</div>
+  <div class="tag sec-tag">El sistema empieza con una meta</div>
 </div>
 
-<!-- 2: El ahorro no es lo que sobra -->
+<!-- 2 El ahorro no es lo que sobra -->
 <div class="slide">
   <div class="tag">01 · Planificar el ahorro</div>
-  <h2 class="title">El ahorro no es<br>lo que te <span class="r">sobra.</span></h2>
-  <div class="quote">
-    <p>"No es cuánto ganás. Es cuánto guardás."</p>
-  </div>
+  <h2 class="title">El ahorro no es<br>lo que te <span class="c">sobra.</span></h2>
+  <div class="q"><p>"No es cuánto ganás. Es cuánto guardás."</p></div>
   <div class="cards">
-    <div class="card red">
+    <div class="card coral">
       <div class="cl">El error más común</div>
       <div class="cd">Gastar primero, guardar lo que queda. El problema: siempre hay algo que consume lo que iba a quedar.</div>
     </div>
     <div class="card lime">
       <div class="cl">Pay Yourself First</div>
-      <div class="cd">Separar el ahorro el mismo día que cobrás. Lo que queda después, se gasta. No al revés.<br><br><strong style="color:var(--lime)">— George Clason, El hombre más rico de Babilonia, 1926</strong></div>
+      <div class="cd">Separar el ahorro el mismo día que cobrás. Lo que queda después, se gasta. <strong style="color:var(--lime)">— George Clason, 1926</strong></div>
     </div>
     <div class="card">
       <div class="cl">Ley de Parkinson</div>
-      <div class="cd"><em style="color:var(--white)">"El gasto se expande para llenar el ingreso disponible."</em> Si cobrás más y no lo sacás antes, siempre gastás más.</div>
+      <div class="cd"><em style="color:var(--white)">"El gasto se expande para llenar el ingreso disponible."</em></div>
     </div>
   </div>
 </div>
 
-<!-- 3: Regla 50/30/20 -->
+<!-- 3 Regla 50/30/20 -->
 <div class="slide">
   <div class="tag">01 · Cuánto ahorrar</div>
   <h2 class="title">La regla<br><em>50 / 30 / 20</em></h2>
-  <p class="sub">Una guía simple para distribuir el ingreso. No es una ley — es un punto de partida.</p>
+  <p class="sub">Una guía para distribuir el ingreso. No es una ley — es un punto de partida.</p>
   <div class="cards">
     <div class="card">
-      <div class="cl">50%</div>
-      <div class="cv" style="color:var(--mid)">Necesidades</div>
-      <div class="cd">Alquiler, servicios, comida, transporte. Lo que no podés evitar.</div>
+      <div class="cl">50%</div><div class="cv" style="color:var(--mid)">Necesidades</div>
+      <div class="cd">Alquiler, servicios, comida, transporte.</div>
     </div>
     <div class="card amber">
-      <div class="cl">30%</div>
-      <div class="cv" style="color:var(--amber)">Deseos</div>
-      <div class="cd">Ocio, ropa, salidas, delivery. Lo que elegís gastar.</div>
+      <div class="cl">30%</div><div class="cv" style="color:var(--amber)">Deseos</div>
+      <div class="cd">Ocio, ropa, salidas, delivery.</div>
     </div>
     <div class="card lime">
-      <div class="cl">20%</div>
-      <div class="cv">Ahorro</div>
+      <div class="cl">20%</div><div class="cv">Ahorro</div>
       <div class="cd">Metas, emergencias, inversión. Empezar con el 5% ya es infinitamente mejor que el 0%.</div>
     </div>
   </div>
-  <p style="font-size:12px;color:var(--muted);margin-top:14px">— Popularizada por Elizabeth Warren en <em>All Your Worth</em>, 2005</p>
+  <p style="font-size:11px;color:var(--muted);margin-top:12px">— Elizabeth Warren, All Your Worth, 2005</p>
 </div>
 
-<!-- 4: Primera meta -->
+<!-- 4 Primera meta -->
 <div class="slide">
   <div class="tag">02 · Empezar por un objetivo</div>
   <h2 class="title">¿Para qué<br>querés <em>la plata?</em></h2>
-  <p class="sub">El ahorro sin destino no dura. El cerebro necesita una imagen concreta de la recompensa futura para resistir el gasto presente.</p>
+  <p class="sub">El ahorro sin destino no dura. El cerebro necesita una imagen concreta de la recompensa futura.</p>
   <div class="formula">monto total ÷ meses = ahorro mensual</div>
   <div class="cards" style="margin-top:10px">
     <div class="card">
       <div class="cl">Ejemplo · Viaje</div>
       <div class="cv">USD 2.000</div>
-      <div class="cd">≈ $3.600.000 ARS al MEP<br>12 meses → $300k/mes<br>18 meses → $200k/mes</div>
+      <div class="cd">≈ $3.600.000 ARS · 12 meses → $300k/mes · 18 meses → $200k/mes</div>
     </div>
     <div class="card blue">
-      <div class="cl">La meta más importante</div>
-      <div class="cd"><strong style="color:var(--blue)">Colchón de emergencia.</strong> 3 a 6 meses de gastos fijos en algo líquido. Es el seguro que evita endeudarse cuando algo sale mal. Va antes que cualquier otra meta.</div>
+      <div class="cl">Meta prioritaria</div>
+      <div class="cd"><strong style="color:var(--blue)">Colchón de emergencia.</strong> 3 a 6 meses de gastos fijos. Es el seguro que evita endeudarse cuando algo sale mal.</div>
     </div>
   </div>
-  <div class="hint">Mangos → Metas → Nueva meta · Poné nombre, monto y fecha límite</div>
+  <div class="hint">
+    <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M10 3C7 3 5 5.5 5 8.5c0 4 3.5 6.5 5 8 1.5-1.5 5-4 5-8C15 5.5 13 3 10 3z" stroke="currentColor" strokeWidth="1.4"/><circle cx="10" cy="8" r="1.5" fill="currentColor" opacity=".5"/></svg>
+    Mangos → Metas → Nueva meta · Nombre, monto y fecha límite
+  </div>
 </div>
 
-<!-- 5: Descuento hiperbólico -->
+<!-- 5 Descuento hiperbólico -->
 <div class="slide">
-  <div class="tag">02 · Economía conductual</div>
-  <h2 class="title">Por qué el<br>cerebro <span class="r">traiciona.</span></h2>
-  <div class="quote">
-    <p>"Preferimos $100 hoy sobre $150 en 6 meses. Aunque matemáticamente sea irracional."</p>
-    <cite>— Descuento hiperbólico · Richard Thaler, Premio Nobel Economía 2017</cite>
-  </div>
+  <div class="tag coral">02 · Economía conductual</div>
+  <h2 class="title">Por qué el<br>cerebro <span class="c">traiciona.</span></h2>
+  <div class="q m"><p>"Preferimos $100 hoy sobre $150 en 6 meses. Aunque sea irracional."</p><cite>— Richard Thaler, Premio Nobel Economía 2017</cite></div>
   <div class="list">
-    <div class="li">
-      <div class="li-mark r">!</div>
-      <div><div class="li-t">El problema</div><div class="li-d">El cerebro valora la recompensa inmediata sobre la futura. Por eso es tan difícil ahorrar "en abstracto": el sacrificio hoy es real, la recompensa de mañana es una abstracción.</div></div>
-    </div>
-    <div class="li">
-      <div class="li-mark">✓</div>
-      <div><div class="li-t">La solución</div><div class="li-d">Una meta concreta con nombre e imagen compite con el impulso de compra presente. "No salí a comer" se convierte en "deposité $30.000 en mi viaje a Brasil". El sacrificio tiene nombre.</div></div>
-    </div>
+    <div class="li"><div class="lm c">!</div><div><div class="lt">El problema</div><div class="ld">El cerebro valora la recompensa inmediata. El sacrificio hoy es real; la recompensa de mañana es una abstracción.</div></div></div>
+    <div class="li"><div class="lm l">✓</div><div><div class="lt">La solución</div><div class="ld">Una meta concreta compite con el impulso de compra. "No salí" se convierte en "deposité $30.000 en mi viaje". El sacrificio tiene nombre.</div></div></div>
   </div>
 </div>
 
-<!-- 6: Los 3 caminos -->
+<!-- 6 Los 3 caminos -->
 <div class="slide">
   <div class="tag">03 · Cuando no cierra</div>
   <h2 class="title">Tres variables<br>para <span class="a">ajustar.</span></h2>
-  <p class="sub">Cuando el número no da, no es fracaso — es información. Solo podés tocar tres cosas.</p>
   <div class="list">
-    <div class="li">
-      <div class="li-mark">1</div>
-      <div><div class="li-t">Ajustar el objetivo</div><div class="li-d">El viaje a Europa puede ser Colombia este año, Europa el que viene. El 0km puede ser un usado de 3 años. No es renunciar al sueño — es elegir la versión alcanzable ahora.</div></div>
-    </div>
-    <div class="li">
-      <div class="li-mark">2</div>
-      <div><div class="li-t">Ajustar el presupuesto</div><div class="li-d">Cada peso en delivery es un peso que no va al viaje. Esto es <strong style="color:var(--white)">costo de oportunidad</strong>: elegir una cosa es renunciar a otra. La app te muestra exactamente cuánto gastás en cada categoría.</div></div>
-    </div>
-    <div class="li">
-      <div class="li-mark">3</div>
-      <div><div class="li-t">Ajustar el tiempo</div><div class="li-d">Mismo objetivo, mismos gastos, más meses. El más indoloro de los tres si el objetivo no es urgente. La matemática es simple: dividís el monto por más.</div></div>
-    </div>
+    <div class="li"><div class="lm l">1</div><div><div class="lt">Ajustar el objetivo</div><div class="ld">El viaje a Europa puede ser Colombia este año. No es renunciar — es elegir la versión alcanzable ahora.</div></div></div>
+    <div class="li"><div class="lm m">2</div><div><div class="lt">Ajustar el presupuesto</div><div class="ld">Cada peso en delivery es un peso que no va al viaje. <strong style="color:var(--white)">Costo de oportunidad</strong>: elegir una cosa es renunciar a otra.</div></div></div>
+    <div class="li"><div class="lm b">3</div><div><div class="lt">Ajustar el tiempo</div><div class="ld">Mismo objetivo, mismos gastos, más meses. El más indoloro si el objetivo no es urgente.</div></div></div>
   </div>
-  <div class="hint">Mangos → Dashboard · Card "Plan de ahorro" con tus números reales</div>
+  <div class="hint">
+    <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M3 17c2-4 4-6 6-4s3 5 5 5 4-6 7-9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/><path d="M3 21h18" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity=".4"/></svg>
+    Mangos → Dashboard · Card "Plan de ahorro"
+  </div>
 </div>
 
-<!-- 7: SECTION bloque 2 -->
+<!-- 7 SECTION -->
 <div class="slide sec">
   <div class="sec-label">Bloque 02</div>
   <div class="sec-title">Conocer<br><em>los números</em></div>
-  <div class="tag" style="margin-top:24px">Sin presupuesto, ninguna estrategia funciona</div>
+  <div class="tag sec-tag">Sin presupuesto, ninguna estrategia funciona</div>
 </div>
 
-<!-- 8: Presupuesto -->
+<!-- 8 Presupuesto -->
 <div class="slide">
   <div class="tag">04 · El presupuesto</div>
   <h2 class="title">El número<br>que <em>manda.</em></h2>
-  <div class="quote">
-    <p>"No podés gestionar lo que no medís."</p>
-    <cite>— Peter Drucker</cite>
-  </div>
+  <div class="q"><p>"No podés gestionar lo que no medís."</p><cite>— Peter Drucker</cite></div>
   <div class="formula">ingresos − fijos − variables − cuotas = balance libre</div>
   <div class="cards" style="margin-top:10px">
-    <div class="card lime">
-      <div class="cl">Si el resultado es positivo</div>
-      <div class="cd">Ese número es tu margen real. Con eso tomás todas las decisiones del mes. Es lo máximo que podés ahorrar, invertir o gastar en extras.</div>
-    </div>
-    <div class="card red">
-      <div class="cl">Si el resultado es negativo</div>
-      <div class="cd">No hay truco de ahorro que funcione sin atacar los gastos primero. El problema es estructural — ningún consejo de inversión lo resuelve.</div>
-    </div>
+    <div class="card lime"><div class="cl">Positivo</div><div class="cd">Ese número es tu margen real. Con eso tomás todas las decisiones del mes.</div></div>
+    <div class="card coral"><div class="cl">Negativo o cero</div><div class="cd">No hay truco de ahorro que funcione sin atacar los gastos primero.</div></div>
   </div>
-  <div class="hint">Mangos → Dashboard · KPI "Balance libre" ya tiene tus números reales</div>
+  <div class="hint">
+    <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M3 10a7 7 0 1014 0A7 7 0 003 10z" stroke="currentColor" strokeWidth="1.4"/><path d="M10 7c-1 0-2 .7-2 1.7s1 1.5 2 1.7 2 .7 2 1.7-1 1.7-2 1.7M10 7v1M10 13.1V14" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
+    Mangos → Dashboard · KPI "Balance libre"
+  </div>
 </div>
 
-<!-- 9: Clasificación -->
+<!-- 9 Clasificación -->
 <div class="slide">
   <div class="tag">05 · Clasificación de gastos</div>
   <h2 class="title">No todos los<br>gastos son <span class="a">iguales.</span></h2>
   <div class="list">
-    <div class="li">
-      <div class="li-mark b">F</div>
-      <div><div class="li-t">Fijos — los que no podés evitar</div><div class="li-d">Alquiler, servicios, prepaga, seguro, expensas. Muy difíciles de mover en el corto plazo. Revisarlos 1 vez por año: ¿negociaste el alquiler? ¿cambiaste el plan de internet?</div></div>
-    </div>
-    <div class="li">
-      <div class="li-mark">V</div>
-      <div><div class="li-t">Variables — tu margen real</div><div class="li-d">Supermercado, delivery, ocio, ropa, peluquería. Acá vive el 80% de la posibilidad de ajuste. Son los únicos gastos que podés cambiar rápidamente.</div></div>
-    </div>
-    <div class="li">
-      <div class="li-mark a">C</div>
-      <div><div class="li-t">Cuotas — compromisos futuros ya tomados</div><div class="li-d">Si compraste en cuotas los últimos 6 meses, tu sueldo de los próximos 6 ya tiene dueño. Regla de oro: cuotas ≤ 25% del ingreso. Mangos te alerta si superás el 30%.</div></div>
-    </div>
+    <div class="li"><div class="lm b">F</div><div><div class="lt">Fijos — los que no podés evitar</div><div class="ld">Alquiler, servicios, prepaga, expensas. Revisarlos 1 vez por año.</div></div></div>
+    <div class="li"><div class="lm l">V</div><div><div class="lt">Variables — tu margen real</div><div class="ld">Supermercado, delivery, ocio, ropa. Acá vive el 80% de la posibilidad de ajuste.</div></div></div>
+    <div class="li"><div class="lm m">C</div><div><div class="lt">Cuotas — compromisos futuros ya tomados</div><div class="ld">Si compraste todo en cuotas, tu sueldo de los próximos meses ya tiene dueño. Regla: cuotas ≤ 25% del ingreso.</div></div></div>
   </div>
-  <div class="hint">Mangos → Movimientos → Presupuestos · Fijá límites por categoría</div>
+  <div class="hint">
+    <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/></svg>
+    Mangos → Movimientos → Presupuestos · Límites por categoría
+  </div>
 </div>
 
-<!-- 10: Hormiga y Vampiro -->
+<!-- 10 Hormiga y Vampiro -->
 <div class="slide">
-  <div class="tag">06 · Las fugas invisibles</div>
-  <h2 class="title">Hormiga 🐜<br>y Vampiro 🧛</h2>
+  <div class="tag coral">06 · Las fugas invisibles</div>
+  <h2 class="title">Hormiga<br>y Vampiro.</h2>
   <div class="two">
     <div>
-      <div class="card red" style="margin-bottom:10px">
+      <div class="card coral" style="margin-bottom:10px">
+        <div class="ib c"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="4" stroke="currentColor" strokeWidth="1.4"/><path d="M5 16c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/><path d="M13 4l2-2M7 4L5 2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg></div>
         <div class="cl">Gastos Hormiga</div>
-        <div class="cd">El café diario: $2.500 × 22 días = <strong style="color:var(--amber)">$55.000/mes</strong>. Pequeños, invisibles, devastadores en conjunto.<br><br><em style="color:var(--mid)">"El efecto latte" — David Bach, El millonario automático</em></div>
+        <div class="cd">El café diario: $2.500 × 22 días = <strong style="color:var(--amber)">$55.000/mes</strong>. Pequeños, invisibles, devastadores.<br><br><em style="color:var(--muted)">"El efecto latte" — David Bach</em></div>
       </div>
-      <div class="card" style="padding:12px 14px">
-        <div class="cl">Por qué no los vemos</div>
-        <div class="cd" style="font-size:11px">Pagamos hasta 30% más con tarjeta que con efectivo para el mismo producto. El "dolor del pago" anestesiado nos hace gastar más sin sentirlo. — Richard Thaler</div>
-      </div>
+      <div class="card" style="padding:11px 14px;font-size:11px;color:var(--mid)">Pagamos hasta 30% más con tarjeta que con efectivo. — Richard Thaler</div>
     </div>
     <div>
       <div class="card amber" style="margin-bottom:10px">
+        <div class="ib m"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 3C7 3 6 5 6 7s1 3 2 4v4h4v-4c1-1 2-2 2-4s-1-4-4-4z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/><path d="M8 15h4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg></div>
         <div class="cl">Gastos Vampiro</div>
-        <div class="cd">Suscripciones que se debitan en automático sin que las usés. Plata que se va en silencio todos los meses sin aportar valor.</div>
+        <div class="cd">Suscripciones automáticas que no usás. Se debitan en silencio todos los meses.</div>
       </div>
-      <div class="card" style="padding:12px 14px">
-        <div class="cl">Ejercicio ahora</div>
-        <div class="cd" style="font-size:11px">Abrí el resumen del mes pasado. Contá cuántas suscripciones tenés. ¿Cuántas usaste esta semana? La brecha es plata que se va en automático.</div>
-      </div>
+      <div class="card" style="padding:11px 14px;font-size:11px;color:var(--mid)">Ejercicio: contá cuántas suscripciones tenés vs cuántas usaste esta semana.</div>
     </div>
   </div>
-  <div class="hint">Mangos → Movimientos → Recurrentes · Pausá las que no usás</div>
-</div>
-
-<!-- 11: Importar -->
-<div class="slide">
-  <div class="tag" style="background:rgba(167,139,250,.08);border-color:rgba(167,139,250,.2);color:var(--purple)">Actividad práctica · 3 min</div>
-  <h2 class="title">Importá<br>tu <em>historial.</em></h2>
-  <p class="sub">En 3 minutos vas a ver tu propia torta de gastos con datos reales. Este es el momento de mayor claridad de la charla.</p>
-  <div class="steps">
-    <div class="step"><div class="sn">1</div><div><div class="st">Exportar de Mercado Pago</div><div class="sd">Actividad → tres puntitos → Exportar → CSV. O sacá un screenshot de la pantalla de movimientos.</div></div></div>
-    <div class="step"><div class="sn">2</div><div><div class="st">Subir en Mangos → Importar</div><div class="sd">La IA detecta fecha, monto y categoriza todo automáticamente. Compatible con CSV y screenshots.</div></div></div>
-    <div class="step"><div class="sn">3</div><div><div class="st">Revisá las fechas y categorías</div><div class="sd">Podés editar antes de importar. Después en Analíticas vas a ver el gráfico completo de tus gastos.</div></div></div>
+  <div class="hint">
+    <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M7 16V4m0 0L3 8m4-4l4 4M13 4v12m0 0l4-4m-4 4l-4-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+    Mangos → Movimientos → Recurrentes · Pausá las que no usás
   </div>
-  <div class="hint">Mangos → Importar → Imagen o CSV</div>
 </div>
 
-<!-- 12: Resumen IA -->
+<!-- 11 Importar -->
+<div class="slide">
+  <div class="tag teal" style="margin-bottom:12px">Actividad práctica · 3 min</div>
+  <h2 class="title">Importá<br>tu <em>historial.</em></h2>
+  <p class="sub">En 3 minutos vas a ver tu propia torta de gastos con datos reales.</p>
+  <div class="steps">
+    <div class="step"><div class="sn">1</div><div><div class="st">Exportar de Mercado Pago</div><div class="sd">Actividad → tres puntitos → Exportar → CSV. O screenshot de movimientos.</div></div></div>
+    <div class="step"><div class="sn">2</div><div><div class="st">Subir en Mangos → Importar</div><div class="sd">La IA detecta fecha, monto y categoriza automáticamente.</div></div></div>
+    <div class="step"><div class="sn">3</div><div><div class="st">Revisá fechas y categorías</div><div class="sd">Editables antes de confirmar. En Analíticas vas a ver el gráfico completo.</div></div></div>
+  </div>
+  <div class="hint">
+    <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M10 3v11M7 11l3 3 3-3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/><path d="M4 17h12" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" opacity=".5"/></svg>
+    Mangos → Importar → Imagen o CSV
+  </div>
+</div>
+
+<!-- 12 Resumen IA -->
 <div class="slide">
   <div class="tag">06c · Resumen semanal IA</div>
   <h2 class="title">Tu semana<br>en <em>4 cards.</em></h2>
-  <p class="sub">La IA no juzga ni regaña — informa y motiva. La diferencia entre un coach financiero y un juez.</p>
+  <p class="sub">La IA no juzga ni regaña — informa y motiva. La diferencia entre un coach y un juez.</p>
   <div class="cards">
-    <div class="card lime"><div class="cl">Gastos</div><div class="cd">Comparativa esta semana vs la anterior. ¿Subiste o bajaste? Con el número exacto.</div></div>
-    <div class="card amber"><div class="cl">Categoría top</div><div class="cd">Dónde se fue más plata, con un tip accionable concreto para esa categoría.</div></div>
-    <div class="card blue"><div class="cl">Portfolio</div><div class="cd">Estado de tus inversiones. P&L de la semana y cómo impacta en tus metas.</div></div>
-    <div class="card"><div class="cl">Metas</div><div class="cd">A qué ritmo avanzás hacia tu objetivo y qué necesitás para llegar en fecha.</div></div>
+    <div class="card lime"><div class="ib l"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 4v8M7 9l3 3 3-3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg></div><div class="cl">Gastos</div><div class="cd">Esta semana vs la anterior.</div></div>
+    <div class="card amber"><div class="ib m" style="background:rgba(255,184,48,.1);border-color:rgba(255,184,48,.2);color:var(--amber)"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" stroke="currentColor" strokeWidth="1.4"/></svg></div><div class="cl">Categoría top</div><div class="cd">Dónde se fue más plata + tip accionable.</div></div>
+    <div class="card blue"><div class="ib b"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="3" y="8" width="3" height="9" rx="1" fill="currentColor" opacity=".4"/><rect x="8.5" y="5" width="3" height="12" rx="1" fill="currentColor" opacity=".65"/><rect x="14" y="2" width="3" height="15" rx="1" fill="currentColor" opacity=".9"/></svg></div><div class="cl">Portfolio</div><div class="cd">Estado de inversiones y P&L.</div></div>
+    <div class="card"><div class="ib l" style="background:rgba(0,212,170,.08);border-color:rgba(0,212,170,.18);color:var(--teal)"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 3C7 3 5 5.5 5 8.5c0 4 3.5 6.5 5 8 1.5-1.5 5-4 5-8C15 5.5 13 3 10 3z" stroke="currentColor" strokeWidth="1.4"/><circle cx="10" cy="8" r="1.5" fill="currentColor" opacity=".5"/></svg></div><div class="cl">Metas</div><div class="cd">Ritmo de avance hacia el objetivo.</div></div>
   </div>
-  <div class="hint">Mangos → Dashboard → Resumen semanal IA → "Generar"</div>
+  <div class="hint">
+    <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M13 2L4.5 13.5H12L11 22l8.5-11.5H12.5L13 2z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/></svg>
+    Mangos → Dashboard → Resumen semanal IA → "Generar"
+  </div>
 </div>
 
-<!-- 13: SECTION bloque 3 -->
+<!-- 13 SECTION -->
 <div class="slide sec">
   <div class="sec-label">Bloque 03</div>
   <div class="sec-title">Consumo<br><em>inteligente</em></div>
-  <div class="tag" style="margin-top:24px">Comprar mejor, no comprar menos</div>
+  <div class="tag sec-tag">Comprar mejor, no comprar menos</div>
 </div>
 
-<!-- 14: Stockeo -->
+<!-- 14 Stockeo -->
 <div class="slide">
   <div class="tag">07 · Comprar estratégicamente</div>
   <h2 class="title">El momento<br><em>correcto.</em></h2>
   <div class="list">
-    <div class="li">
-      <div class="li-mark">%</div>
-      <div><div class="li-t">Descuentos bancarios</div><div class="li-d">Los bancos ofrecen 20-30% en supermercados ciertos días. Concentrar las compras del mes puede significar $30.000-$50.000 de ahorro mensual en una familia.</div></div>
-    </div>
-    <div class="li">
-      <div class="li-mark">×3</div>
-      <div><div class="li-t">Stockeo de no-perecederos</div><div class="li-d">Aceite, papel higiénico, artículos de limpieza. Comprar en cantidad cuando hay oferta real. Regla: solo lo que usás en menos de 3 meses y no requiere frío.</div></div>
-    </div>
-    <div class="li">
-      <div class="li-mark r">!</div>
-      <div><div class="li-t">La trampa de la oferta falsa</div><div class="li-d">"30% off en el segundo" de algo que no usabas. El descuento solo existe si ibas a comprarlo de todas formas. Nunca stockees financiado en cuotas con interés.</div></div>
-    </div>
+    <div class="li"><div class="lm l">%</div><div><div class="lt">Descuentos bancarios</div><div class="ld">Los bancos ofrecen 20-30% en supermercados ciertos días. Concentrar compras: $30.000-$50.000 de ahorro mensual.</div></div></div>
+    <div class="li"><div class="lm m">×3</div><div><div class="lt">Stockeo de no-perecederos</div><div class="ld">Aceite, papel, limpieza. Solo lo que usás en menos de 3 meses y no requiere frío.</div></div></div>
+    <div class="li"><div class="lm c">!</div><div><div class="lt">La trampa de la oferta falsa</div><div class="ld">"30% off en el segundo" de algo que no usabas. El descuento solo existe si ibas a comprarlo. Nunca en cuotas con interés.</div></div></div>
   </div>
 </div>
 
-<!-- 15: 24hs -->
+<!-- 15 24hs -->
 <div class="slide">
   <div class="tag">08 · Consumo consciente</div>
   <h2 class="title">La regla de<br>las <em>24 horas.</em></h2>
-  <div class="quote">
-    <p>"El mejor gasto es el que no hiciste."</p>
-  </div>
+  <div class="q"><p>"El mejor gasto es el que no hiciste."</p></div>
   <div class="two">
     <div class="card">
       <div class="cl">Por qué funciona</div>
-      <div class="cd">Las compras impulsivas activan dopamina. El <strong style="color:var(--white)">deseo de comprar</strong> libera más dopamina que <em>tener el objeto</em>. Las marcas explotan eso: contadores regresivos, "última unidad", "otros lo están mirando".</div>
+      <div class="cd">El <strong style="color:var(--white)">deseo de comprar</strong> libera más dopamina que tener el objeto. Las marcas explotan eso: contadores regresivos, "última unidad".</div>
     </div>
     <div class="card lime">
       <div class="cl">La escala práctica</div>
-      <div class="cd">Hasta $50k → esperar 24hs<br>Hasta $200k → esperar 1 semana<br>Más de $200k → ¿entra en el balance libre del mes?<br><br><em style="color:var(--mid)">+60% de los carritos abandonados nunca se retoman.</em></div>
+      <div class="cd">Hasta $50k → 24hs<br>Hasta $200k → 1 semana<br>Más de $200k → ¿entra en el balance libre?<br><br><em style="color:var(--muted)">+60% de los carritos abandonados nunca se retoman.</em></div>
     </div>
   </div>
 </div>
 
-<!-- 16: SECTION bloque 4 -->
+<!-- 16 SECTION -->
 <div class="slide sec">
   <div class="sec-label">Bloque 04</div>
   <div class="sec-title">Optimización<br><em>financiera</em></div>
-  <div class="tag" style="margin-top:24px">Hacé trabajar tu plata</div>
+  <div class="tag sec-tag">Hacé trabajar tu plata</div>
 </div>
 
-<!-- 17: Tarjeta -->
+<!-- 17 Tarjeta -->
 <div class="slide">
   <div class="tag">09 · La tarjeta como herramienta</div>
-  <h2 class="title">Una herramienta,<br>no un <span class="r">enemigo.</span></h2>
-  <div class="quote">
-    <p>"La tarjeta es el mejor instrumento financiero para quien paga el total. Y el más caro para quien no."</p>
-  </div>
+  <h2 class="title">Una herramienta,<br>no un <span class="c">enemigo.</span></h2>
+  <div class="q m"><p>"La tarjeta es el mejor instrumento para quien paga el total. Y el más caro para quien no."</p></div>
   <div class="two">
     <div class="card lime">
       <div class="cl">El float gratuito</div>
-      <div class="cd">Comprás hoy → el resumen cierra en ~25 días → tenés 10 días más para pagar.<br><strong style="color:var(--lime)">Hasta 45 días de plata de terceros sin costo.</strong><br><br>En Argentina con inflación, pagás en 45 días con pesos que valen menos.</div>
+      <div class="cd">Comprás hoy → resumen cierra en ~25 días → 10 días más para pagar.<br><strong style="color:var(--lime)">Hasta 45 días de plata de terceros sin costo.</strong></div>
     </div>
-    <div class="card red">
+    <div class="card coral">
       <div class="cl">La condición indispensable</div>
-      <div class="cd">Solo funciona pagando el <strong style="color:var(--red)">TOTAL</strong> del resumen, nunca el mínimo.<br><br>El interés de financiación en Argentina (TNA 120-180%) destruye cualquier ventaja en días. Si pagás el mínimo, la tarjeta es el instrumento más caro que existe.</div>
+      <div class="cd">Solo funciona pagando el <strong style="color:var(--coral)">TOTAL</strong>. TNA de financiación: 120-180%. Destruye cualquier ventaja en días.</div>
     </div>
   </div>
 </div>
 
-<!-- 18: Money Market -->
+<!-- 18 Money Market -->
 <div class="slide">
   <div class="tag">10 · Hacer rendir el sueldo</div>
-  <h2 class="title">Fondo T+0:<br>la cuenta que el banco<br>no te <span class="a">ofrece.</span></h2>
-  <div class="quote">
-    <p>"La inflación es el impuesto que pagan los que no hacen nada con su dinero."</p>
-  </div>
+  <h2 class="title">Fondo T+0:<br>la cuenta que<br>el banco no te <span class="m">ofrece.</span></h2>
+  <div class="q m"><p>"La inflación es el impuesto que pagan los que no hacen nada con su dinero."</p></div>
   <div class="cards">
-    <div class="card">
-      <div class="cl">Qué es un FCI T+0</div>
-      <div class="cd">Fondo de rescate inmediato. Disponible en el día. TNA típica 35-45%. En Mercado Pago, Ualá, Naranja X, o cualquier banco.</div>
-    </div>
-    <div class="card lime">
-      <div class="cl">La estrategia completa</div>
-      <div class="cv" style="font-size:14px;line-height:1.6">Cobrás → todo al fondo → gastás con tarjeta → vence el resumen → sacás y pagás el total</div>
-      <div class="cd">Tu sueldo rindió <strong style="color:var(--lime)">45 días extra</strong> antes de salir del bolsillo.</div>
-    </div>
-    <div class="card mango">
-      <div class="cl">Tu perfil importa</div>
-      <div class="cd">Conservador → FCI T+0<br>Moderado → FCI + plazo fijo<br>Agresivo → CEDEARs, acciones<br><br>Ya lo capturamos en el onboarding.</div>
-    </div>
+    <div class="card"><div class="cl">Qué es un FCI T+0</div><div class="cd">Rescate inmediato. TNA 35-45%. Disponible en MP, Ualá, Naranja X, cualquier banco.</div></div>
+    <div class="card lime"><div class="cl">La estrategia</div><div class="cd">Cobrás → todo al fondo → gastás con tarjeta → vence el resumen → pagás el total.<br><strong style="color:var(--lime)">Tu sueldo rindió 45 días extra.</strong></div></div>
+    <div class="card mango"><div class="cl">Tu perfil importa</div><div class="cd">Conservador → FCI T+0<br>Moderado → FCI + plazo fijo<br>Agresivo → CEDEARs</div></div>
   </div>
-  <div class="hint">Mangos → Inversiones → Agregar → FCI o Plazo fijo</div>
+  <div class="hint">
+    <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="12" rx="2" stroke="currentColor" strokeWidth="1.4"/><path d="M7 2.5v3M13 2.5v3M3 8.5h14" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
+    Mangos → Inversiones → Agregar → FCI o Plazo fijo
+  </div>
 </div>
 
-<!-- 19: Toggle ARS/USD -->
+<!-- 19 ARS/USD -->
 <div class="slide">
   <div class="tag amber">10b · El contexto argentino</div>
   <h2 class="title">ARS o <em>USD.</em><br>Vos elegís.</h2>
-  <p class="sub">En Argentina el dólar no es un tabú — es parte de la realidad financiera de muchas familias.</p>
+  <p class="sub">En Argentina el dólar no es un tabú — es parte de la realidad financiera.</p>
   <div class="list">
-    <div class="li">
-      <div class="li-mark b">↕</div>
-      <div><div class="li-t">Toggle ARS/USD en Mangos</div><div class="li-d">Todo el portfolio, las metas y el dashboard en ARS o USD. La cotización MEP se actualiza automáticamente. MEP es el más representativo del valor real de mercado.</div></div>
-    </div>
-    <div class="li">
-      <div class="li-mark">🇺🇸</div>
-      <div><div class="li-t">CEDEARs — cobertura dolarizada</div><div class="li-d">Certificados de empresas americanas que cotizan en pesos pero siguen al dólar. Protección contra devaluación. Comprás en pesos, tu inversión se mueve con el tipo de cambio.</div></div>
-    </div>
-    <div class="li">
-      <div class="li-mark a">i</div>
-      <div><div class="li-t">La plata parada pierde</div><div class="li-d">Con inflación al 100-150% anual, la caja de ahorro al 0-5% TNA pierde poder adquisitivo en tiempo real. El dinero "seguro" quieto no es seguro.</div></div>
-    </div>
+    <div class="li"><div class="lm b">↕</div><div><div class="lt">Toggle ARS/USD en Mangos</div><div class="ld">Todo el portfolio y las metas en ARS o USD. La cotización MEP se actualiza automáticamente.</div></div></div>
+    <div class="li"><div class="lm m">🇺🇸</div><div><div class="lt">CEDEARs — cobertura dolarizada</div><div class="ld">Certificados de empresas americanas que cotizan en pesos pero siguen al dólar.</div></div></div>
+    <div class="li"><div class="lm c">!</div><div><div class="lt">La plata parada pierde</div><div class="ld">Con inflación al 100-150% anual, la caja de ahorro al 0-5% TNA se derrite en tiempo real.</div></div></div>
   </div>
-  <div class="hint">Mangos → Sidebar → Toggle ARS / USD</div>
+  <div class="hint">
+    <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M7 16V4m0 0L3 8m4-4l4 4M13 4v12m0 0l4-4m-4 4l-4-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+    Mangos → Sidebar → Toggle ARS / USD
+  </div>
 </div>
 
-<!-- 20: Inversiones + metas -->
+<!-- 20 Inversiones + metas -->
 <div class="slide">
   <div class="tag">10c · Inversiones y metas unidas</div>
-  <h2 class="title">Tu inversión cuenta<br>hacia tu <em>meta.</em></h2>
-  <div class="quote">
-    <p>"El interés compuesto es la octava maravilla del mundo. El que lo entiende, lo gana. El que no, lo paga."</p>
-    <cite>— Atribuido a Einstein</cite>
-  </div>
+  <h2 class="title">Tu inversión<br>cuenta hacia<br>tu <em>meta.</em></h2>
+  <div class="q"><p>"El interés compuesto es la octava maravilla del mundo. El que lo entiende, lo gana. El que no, lo paga."</p><cite>— Atribuido a Einstein</cite></div>
   <div class="cards">
     <div class="card lime">
       <div class="cl">Ejemplo en vivo</div>
       <div class="cv">22.8%</div>
-      <div class="cd">Meta viaje $3.600.000 · FCI vinculado $500.000 · Ahorro manual $300.000<br><strong style="color:var(--lime)">Progreso real: $820.000</strong> — sin tocar nada esta semana.</div>
+      <div class="cd">Meta viaje $3.600.000 · FCI $500.000 · Ahorro $300.000 = <strong style="color:var(--lime)">$820.000</strong> de progreso real.</div>
     </div>
     <div class="card blue">
       <div class="cl">Cómo vincularlo</div>
-      <div class="cd">Metas → card de la meta → "Vincular inversión". El valor de mercado se suma al progreso automáticamente.<br><br>El portfolio rinde mientras vos dormís.</div>
+      <div class="cd">Metas → card → "Vincular inversión". El valor de mercado se suma al progreso automáticamente.</div>
     </div>
   </div>
-  <div class="hint">Mangos → Metas → Vincular inversión a tu meta</div>
+  <div class="hint">
+    <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M8 12.5a4 4 0 005.5 0l2-2a4 4 0 00-5.5-5.5L8.5 6.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/><path d="M12 7.5a4 4 0 00-5.5 0l-2 2a4 4 0 005.5 5.5l1.5-1.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
+    Mangos → Metas → Vincular inversión
+  </div>
 </div>
 
-<!-- 21: Score / límite real -->
+<!-- 21 Score -->
 <div class="slide">
   <div class="tag">11 · Tu límite real</div>
   <h2 class="title">El banco no define<br>tu <span class="a">límite.</span></h2>
-  <div class="quote">
-    <p>"El banco te presta según lo que ganás. Vos decidís según lo que te queda."</p>
-  </div>
+  <div class="q m"><p>"El banco te presta según lo que ganás. Vos decidís según lo que te queda."</p></div>
   <div class="two">
     <div>
-      <div class="card red" style="margin-bottom:10px">
+      <div class="card coral" style="margin-bottom:10px">
         <div class="cl">El error más caro</div>
-        <div class="cd">Usar el límite de la tarjeta como referencia de capacidad de gasto. El banco fija el límite según tu historial crediticio — no según tu presupuesto. Son dos cosas completamente distintas.</div>
+        <div class="cd">Usar el límite de la tarjeta como referencia de gasto. Son dos cosas completamente distintas.</div>
       </div>
-      <div class="formula" style="font-size:13px;padding:10px 16px">máx. tarjeta = balance libre del mes</div>
+      <div class="formula" style="font-size:13px;padding:9px 14px">máx. tarjeta = balance libre</div>
     </div>
     <div class="card lime">
-      <div class="cl">Score Financiero de Mangos</div>
+      <div class="ib l"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M4 15a8 8 0 1112 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M10 7v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><circle cx="10" cy="13" r="1" fill="currentColor"/></svg></div>
+      <div class="cl">Score Financiero</div>
       <div class="cv">0 — 100</div>
-      <div class="cd">Cuatro variables:<br>· Tasa de ahorro (>20% ideal)<br>· Superávit mensual<br>· Cuotas como % del ingreso (<30%)<br>· Inversiones y metas activas</div>
+      <div class="cd">· Tasa de ahorro (>20%)<br>· Superávit mensual<br>· Cuotas (<30% ingreso)<br>· Inversiones y metas</div>
     </div>
   </div>
-  <div class="hint">Mangos → Dashboard → Score Financiero</div>
+  <div class="hint">
+    <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M4 15a8 8 0 1112 0" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/><path d="M10 7v4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/><circle cx="10" cy="13" r="1" fill="currentColor"/></svg>
+    Mangos → Dashboard → Score Financiero
+  </div>
 </div>
 
-<!-- 22: SECTION bloque 5 -->
+<!-- 22 SECTION -->
 <div class="slide sec">
   <div class="sec-label">Bloque 05</div>
   <div class="sec-title">El siguiente<br><em>nivel</em></div>
-  <div class="tag" style="margin-top:24px">Lo que habilita tener el sistema armado</div>
+  <div class="tag sec-tag">Lo que habilita tener el sistema armado</div>
 </div>
 
-<!-- 23 (index 22): Scanner y cierre -->
+<!-- 23 CIERRE -->
 <div class="slide">
   <div class="cta">
-    <div style="font-size:52px;margin-bottom:16px">🥭</div>
-    <h2 style="font-size:clamp(22px,3.2vw,40px);font-weight:900;letter-spacing:-1.5px;margin-bottom:16px">El sistema en 5 pasos</h2>
-    <div class="steps" style="text-align:left;max-width:500px;margin:0 auto 24px">
+    <div style="width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,rgba(255,154,53,.15),rgba(224,122,24,.08));border:1px solid rgba(255,154,53,.25);display:flex;align-items:center;justify-content:center;margin:0 auto 18px">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 4C9 4 6 8 6 13c0 6 4.5 9.5 8 11 3.5-1.5 8-5 8-11 0-5-3-9-8-9z" fill="#FF9A35"/><path d="M14 4C14 4 14 1 17.5 1.5" stroke="#CCFF47" strokeWidth="1.8" strokeLinecap="round"/><ellipse cx="11.5" cy="13" rx="2" ry="3.5" fill="#E07A18" opacity=".4" transform="rotate(-15 11.5 13)"/></svg>
+    </div>
+    <h2 style="font-size:clamp(20px,3vw,38px);font-weight:900;letter-spacing:-1.5px;margin-bottom:14px">El sistema en 5 pasos</h2>
+    <div class="steps" style="text-align:left;max-width:480px;margin:0 auto 22px">
       <div class="step"><div class="sn">1</div><div><div class="st">Definí tu objetivo</div><div class="sd">Darle nombre al sacrificio.</div></div></div>
       <div class="step"><div class="sn">2</div><div><div class="st">Conocé tus números</div><div class="sd">Presupuesto real, balance libre.</div></div></div>
       <div class="step"><div class="sn">3</div><div><div class="st">Controlá las fugas</div><div class="sd">Hormiga, vampiro, cuotas.</div></div></div>
       <div class="step"><div class="sn">4</div><div><div class="st">Optimizá el timing</div><div class="sd">Tarjeta + fondo T+0.</div></div></div>
       <div class="step"><div class="sn">5</div><div><div class="st">Hacé crecer lo que guardás</div><div class="sd">Inversión vinculada a metas.</div></div></div>
     </div>
-    <div style="font-size:clamp(14px,1.7vw,19px);font-style:italic;color:var(--mid);line-height:1.65">"No necesitás ganar más para empezar.<br>Necesitás saber qué hacer con lo que ya tenés."</div>
-    <div class="pills" style="justify-content:center;margin-top:20px">
-      <span class="pill pl">🤖 Scanner IA</span>
-      <span class="pill pb">🔎 Buscar Activo</span>
-      <span class="pill pa">⚖️ Comparador</span>
+    <div style="font-size:clamp(13px,1.6vw,18px);font-style:italic;color:var(--mid);line-height:1.65">"No necesitás ganar más para empezar.<br>Necesitás saber qué hacer con lo que ya tenés."</div>
+    <div class="pills">
+      <span class="pl"><svg width="12" height="12" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="9" r="5" stroke="currentColor" strokeWidth="1.5"/><path d="M13.5 15.5l2.5 2.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg> Scanner IA</span>
+      <span class="pb"><svg width="12" height="12" viewBox="0 0 20 20" fill="none"><path d="M3 17l4-5 4 3 4-6 4-3" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/></svg> Buscar Activo</span>
+      <span class="pm"><svg width="12" height="12" viewBox="0 0 20 20" fill="none"><rect x="3" y="5" width="6" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.4"/><rect x="11" y="3" width="6" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.4"/></svg> Comparador</span>
     </div>
   </div>
 </div>
 
-</div><!-- /deck -->
+</div>
 
 <script>
-const SUPA_URL = "https://ghfnscswtsgnylumcxyp.supabase.co";
-const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoZm5zY3N3dHNnbnlsdW1jeHlwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNzUxOTgsImV4cCI6MjA4OTk1MTE5OH0.dq2Xhy7c7X_kZvGtln5Ko8hl5woYsHGq5hXLSfJQoic";
+const SUPA_URL="https://ghfnscswtsgnylumcxyp.supabase.co";
+const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdoZm5zY3N3dHNnbnlsdW1jeHlwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNzUxOTgsImV4cCI6MjA4OTk1MTE5OH0.dq2Xhy7c7X_kZvGtln5Ko8hl5woYsHGq5hXLSfJQoic";
 
-// Mapping: presentation index → app slide key
-const APP_SLIDE = {
-  0:0,1:1,2:2,3:2,4:3,5:3,6:3,
-  7:4,8:4,9:5,10:6,11:"6b",12:"6c",
-  13:7,14:7,15:8,
-  16:9,17:9,18:10,19:"10b",20:"10c",21:11,
-  22:12,23:13
-};
+const APP={0:0,1:1,2:2,3:2,4:3,5:3,6:3,7:4,8:4,9:5,10:6,11:"6b",12:"6c",13:7,14:7,15:8,16:9,17:9,18:10,19:"10b",20:"10c",21:11,22:12,23:13};
 
-const slides = Array.from(document.querySelectorAll('.slide'));
-const total = slides.length;
-let cur = 0;
-let sb = null;
+const slides=Array.from(document.querySelectorAll('.slide'));
+const total=slides.length;
+let cur=0,sb=null;
 
-// Init Supabase
-try {
-  sb = supabase.createClient(SUPA_URL, SUPA_KEY);
-  document.getElementById('live').classList.add('on');
-} catch(e) { console.warn('Supabase init failed', e); }
+try{sb=supabase.createClient(SUPA_URL,SUPA_KEY);document.getElementById('live').classList.add('on');}
+catch(e){console.warn('Supabase',e);}
 
-function updateUI() {
-  document.getElementById('prog').style.width = (cur / (total - 1) * 100) + '%';
-  document.getElementById('ct').textContent =
-    String(cur + 1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0');
+function ui(){
+  document.getElementById('prog').style.width=(cur/(total-1)*100)+'%';
+  document.getElementById('ct').textContent=String(cur+1).padStart(2,'0')+' / '+String(total).padStart(2,'0');
 }
 
-async function pushSlide(idx) {
-  if (!sb) return;
-  try {
-    const appSlide = APP_SLIDE[idx] !== undefined ? APP_SLIDE[idx] : idx;
-    await sb.from('charla_state').upsert({
-      id: 'live',
-      slide: appSlide,
-      active: true,
-      updated_at: new Date().toISOString()
-    });
-  } catch(e) { console.warn('push failed', e); }
+async function push(idx){
+  if(!sb)return;
+  try{await sb.from('charla_state').upsert({id:'live',slide:APP[idx]??idx,active:true,updated_at:new Date().toISOString()});}
+  catch(e){console.warn('push',e);}
 }
 
-function goTo(idx) {
-  if (idx < 0 || idx >= total) return;
-  // Remove active from current
+function goTo(idx){
+  if(idx<0||idx>=total)return;
   slides[cur].classList.remove('active');
   slides[cur].classList.add('out');
-  setTimeout(() => slides[cur].classList.remove('out'), 400);
-  // Activate new
-  cur = idx;
+  setTimeout(()=>slides[cur].classList.remove('out'),400);
+  cur=idx;
   slides[cur].classList.add('active');
-  updateUI();
-  pushSlide(cur);
+  ui();push(cur);
 }
 
-function next() { goTo(cur + 1); }
-function prev() { goTo(cur - 1); }
+function next(){goTo(cur+1);}
+function prev(){goTo(cur-1);}
 
-document.addEventListener('keydown', e => {
-  if (['ArrowRight','ArrowDown',' '].includes(e.key)) { e.preventDefault(); next(); }
-  if (['ArrowLeft','ArrowUp'].includes(e.key)) { e.preventDefault(); prev(); }
-  if (e.key === 'Escape') goTo(0);
+document.addEventListener('keydown',e=>{
+  if(['ArrowRight','ArrowDown',' '].includes(e.key)){e.preventDefault();next();}
+  if(['ArrowLeft','ArrowUp'].includes(e.key)){e.preventDefault();prev();}
+  if(e.key==='Escape')goTo(0);
 });
 
-// Touch
-let tx = 0;
-document.addEventListener('touchstart', e => tx = e.touches[0].clientX, {passive:true});
-document.addEventListener('touchend', e => {
-  const dx = e.changedTouches[0].clientX - tx;
-  if (Math.abs(dx) > 60) dx < 0 ? next() : prev();
-}, {passive:true});
+let tx=0;
+document.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+document.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>60)dx<0?next():prev();},{passive:true});
 
-// Init
-updateUI();
-pushSlide(0);
+ui();push(0);
 </script>
 </body>
 </html>
