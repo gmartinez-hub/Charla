@@ -1,0 +1,13 @@
+{
+  "name": "mangos-charla",
+  "private": true,
+  "version": "2.1.0",
+  "type": "module",
+  "engines": {
+    "node": ">=24.19.0 <25"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "check": "node --check controller.mjs && node --check presentation.mjs && node --check config.mjs && node --test tests/*.test.mjs"
+  }
+}
